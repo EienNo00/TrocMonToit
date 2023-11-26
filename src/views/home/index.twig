@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+</head>
+
+<body>
+    <h1>Register</h1>
+
+    <form action="/connexion" method="post">
+        <label for="mail">Mail:</label>
+        <input type="email" id="mail" name="mail" required />
+        <br />
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required />
+        <br />
+        <input type="submit" value="Register" />
+    </form>
+    <ul>
+        <?php foreach($users as $user): ?>
+        <li>
+            <?= $user->email ?>
+            <?= $user->password ?>
+        </li>
+        <?php endforeach ?>
+    </ul>
+
+</body>
+<style>
+    body {
+        background-color: black;
+        color: aliceblue;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+</style>
+
+</html>
