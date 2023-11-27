@@ -67,7 +67,8 @@ try {
             id_service INT NOT NULL,
             id_housing INT NOT NULL,
             FOREIGN KEY (id_service) REFERENCES service(id_service),
-            FOREIGN KEY (id_housing) REFERENCES housing(id_housing)
+            FOREIGN KEY (id_housing) REFERENCES housing(id_housing),
+            UNIQUE KEY unique_housing_service (id_housing, id_service)
         );"
     );
 
@@ -77,7 +78,8 @@ try {
             id_equipment INT NOT NULL,
             id_housing INT NOT NULL,
             FOREIGN KEY (id_equipment) REFERENCES equipment(id_equipment),
-            FOREIGN KEY (id_housing) REFERENCES housing(id_housing)
+            FOREIGN KEY (id_housing) REFERENCES housing(id_housing),
+            UNIQUE KEY unique_housing_equipment (id_housing, id_equipment)
         );"
     );
 
@@ -104,44 +106,90 @@ try {
             FOREIGN KEY (id_users) REFERENCES users(id_users)
         );"
     );
+
     $pdo->exec(
-        "INSERT INTO type(id_type, housing_type)VALUES
-    (1,'Appartements'),
-    (2,'Maisons'),
-    (3,'Chalets'),
-    (4,'Villas'),
-    (5,'Peniches'),
-    (6,'Yourtes'),
-    (7,'Cabanes'),
-    (8,'Igloos'),
-    (9,'Tentes'),
-    (10,'Cars');
-"
+        "INSERT INTO type(id_type, housing_type) VALUES
+        (1,'Appartements'),
+        (2,'Maisons'),
+        (3,'Chalets'),
+        (4,'Villas'),
+        (5,'Peniches'),
+        (6,'Yourtes'),
+        (7,'Cabanes'),
+        (8,'Igloos'),
+        (9,'Tentes'),
+        (10,'Cars');
+        "
     );
     $pdo->exec(
         "INSERT INTO service(id_service,service_name) VALUES
-    "
+        (1,'Transfert aeroport'),
+        (2,'Petit-dejeuner'),
+        (3,'Service de menage'),
+        (4,'Location de voiture'),
+        (5,'Visites guidees'),
+        (6,'Cours de cuisine'),
+        (7,'Loisirs');
+        "
     );
+    $pdo->exec(
+        "INSERT INTO equipment(id_equipment,equipment_name) VALUES
+        (1,'Connexion Wifi'),
+        (2,'Climatiseur'),
+        (3,'Chauffage'),
+        (4,'Machine a laver'),
+        (5,'Seche linge'),
+        (6,'Television'),
+        (7,'Fer a repasser / Planche a repasser'),
+        (8,'Nintendo Switch'),
+        (9, 'PS5'),
+        (10,'Terrasse'),
+        (11,'Balcon'),
+        (12,'Piscine'),
+        (13,'Jardin');
+        "
+    );
+
     $faker = Factory::create();
-    // $password = hash('sha256', 'password');
-    // echo $password;
     for ($i = 0; $i < 10; $i++) {
-        $type = $faker->randomElement(['Appartements', 'Maisons', 'Chalets', 'Peniches', 'Yourtes', 'Cabanes', 'Igloos', 'Tentes', 'Cars']);
-        $address = $faker->randomElement(['']);
-        $housingName = $faker->randomElement(['']);
-        //         $pdo->exec(
-        //             "INSERT INTO housing(night_price, housing_name, description)
-        //             VALUES
-        //             ('{$faker->price}','{$faker->}')
-        // );"
-        //         );
+        $typeId = $faker->numberBetween(1, 10);
+
+        $address = $faker->address;
+        $housingName = $faker->word;
+        $nightPrice = $faker->numberBetween($min = 50, $max = 200);
+
+        $pdo->exec(
+            "INSERT INTO housing(id_type, night_price, housing_name, description, id_address, id_image)
+        VALUES
+        ('{$typeId}', '{$nightPrice}', '{$housingName}', '{$faker->sentence}', 1, 1);
+        "
+        );
+
+        $phoneNumber = substr($faker->phoneNumber, 0, 15); // Trim phone number if necessary
         $pdo->exec(
             "INSERT INTO users (last_name, first_name, email, password, phone_number)
-            VALUES 
-                ('{$faker->lastName}', '{$faker->firstName}', '{$faker->email}', 'pass', '0636363636');
+        VALUES 
+            ('{$faker->lastName}', '{$faker->firstName}', '{$faker->email}', 'pass', '{$phoneNumber}');
         "
         );
     }
+    for ($i = 0; $i < 10; $i++) {
+        $equipmentId = $faker->numberBetween(1, 13);
+        $housingId = $faker->numberBetween(1, 10);
+        $existingEntry = $pdo->query("SELECT COUNT(*) FROM housing_equipment WHERE id_housing = '{$housingId}' AND id_equipment = '{$equipmentId}'")->fetchColumn();
+        if ($existingEntry == 0) {
+            $pdo->exec(
+                "INSERT INTO housing_equipment (id_equipment, id_housing)
+            VALUES ('{$equipmentId}', '{$housingId}');
+        "
+            );
+        } else {
+            echo "La combinaison id_housing = {$housingId} et id_equipment = {$equipmentId} existe déjà. Évitant le doublon.\n";
+        }
+    }
+
+
+
 
     echo "Tables créées et données insérées avec succès.";
 } catch (\PDOException $e) {
