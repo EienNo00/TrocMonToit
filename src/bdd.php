@@ -1,4 +1,7 @@
 <?php
+require 'vendor/autoload.php';
+
+use Faker\Factory;
 
 try {
     $pdo = new \PDO(
@@ -10,12 +13,14 @@ try {
             \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
         ]
     );
+
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS type (
             id_type INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
             housing_type VARCHAR(255) NOT NULL
         );"
     );
+
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS users (
             id_users INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -27,6 +32,7 @@ try {
         );
     "
     );
+
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS housing (
             id_housing INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -40,18 +46,21 @@ try {
         );
     "
     );
+
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS equipment (
             id_equipment INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
             equipment_name VARCHAR(255) NOT NULL
         );"
     );
+
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS service (
             id_service INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
             service_name VARCHAR(255) NOT NULL
         );"
     );
+
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS housing_service (
             id_housing_service INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -61,6 +70,7 @@ try {
             FOREIGN KEY (id_housing) REFERENCES housing(id_housing)
         );"
     );
+
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS housing_equipment (
             id_housing_equipment INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -70,6 +80,7 @@ try {
             FOREIGN KEY (id_housing) REFERENCES housing(id_housing)
         );"
     );
+
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS reservation (
             id_reservation INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -81,6 +92,7 @@ try {
             FOREIGN KEY (id_users) REFERENCES users(id_users)
         );"
     );
+
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS opinion (
             id_opinion INT AUTO_INCREMENT PRIMARY KEY,
@@ -93,51 +105,43 @@ try {
         );"
     );
     $pdo->exec(
-        "INSERT INTO type (housing_type)
-    VALUES ('Appartements');"
+        "INSERT INTO type(id_type, housing_type)VALUES
+    (1,'Appartements'),
+    (2,'Maisons'),
+    (3,'Chalets'),
+    (4,'Villas'),
+    (5,'Peniches'),
+    (6,'Yourtes'),
+    (7,'Cabanes'),
+    (8,'Igloos'),
+    (9,'Tentes'),
+    (10,'Cars');
+"
     );
     $pdo->exec(
-        "INSERT INTO type (housing_type)
-    VALUES ('Maisons');"
+        "INSERT INTO service(id_service,service_name) VALUES
+    "
     );
-    $pdo->exec(
-        "INSERT INTO type (housing_type)
-    VALUES ('Chalets');"
-    );
-    $pdo->exec(
-        "INSERT INTO type (housing_type)
-    VALUES ('Villas');"
-    );
-    $pdo->exec(
-        "INSERT INTO type (housing_type)
-    VALUES ('Péniches');"
-    );
-    $pdo->exec(
-        "INSERT INTO type (housing_type)
-    VALUES ('Yourtes');"
-    );
-    $pdo->exec(
-        "INSERT INTO type (housing_type)
-    VALUES ('Cabanes');"
-    );
-    $pdo->exec(
-        "INSERT INTO type (housing_type)
-    VALUES ('Igloos');"
-    );
-    $pdo->exec(
-        "INSERT INTO type (housing_type)
-    VALUES ('Tentes');"
-    );
-    $pdo->exec(
-        "INSERT INTO type (housing_type)
-    VALUES ('Cars');"
-    );
-    $pdo->exec("INSERT INTO users (last_name, first_name, email, password, phone_number)
-        VALUES 
-            ('Doe', 'John', 'test@gmail.com', 'mypass','0607080910'),
-            ('Smith', 'Jane', 'test1@gmail.com', 'mypass1','0607080910'),
-            ('Johnson', 'Bob', 'test2@gmail.com', 'mypass2','0607080910');
-    ");
+    $faker = Factory::create();
+    // $password = hash('sha256', 'password');
+    // echo $password;
+    for ($i = 0; $i < 10; $i++) {
+        $type = $faker->randomElement(['Appartements', 'Maisons', 'Chalets', 'Peniches', 'Yourtes', 'Cabanes', 'Igloos', 'Tentes', 'Cars']);
+        $address = $faker->randomElement(['']);
+        $housingName = $faker->randomElement(['']);
+        //         $pdo->exec(
+        //             "INSERT INTO housing(night_price, housing_name, description)
+        //             VALUES
+        //             ('{$faker->price}','{$faker->}')
+        // );"
+        //         );
+        $pdo->exec(
+            "INSERT INTO users (last_name, first_name, email, password, phone_number)
+            VALUES 
+                ('{$faker->lastName}', '{$faker->firstName}', '{$faker->email}', 'pass', '0636363636');
+        "
+        );
+    }
 
     echo "Tables créées et données insérées avec succès.";
 } catch (\PDOException $e) {

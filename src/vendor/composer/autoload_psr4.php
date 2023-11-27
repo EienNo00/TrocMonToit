@@ -11,7 +11,9 @@ return array(
     'Symfony\\Polyfill\\Ctype\\' => array($vendorDir . '/symfony/polyfill-ctype'),
     'Source\\' => array($baseDir . '/Source'),
     'Router\\' => array($baseDir . '/Router'),
+    'Psr\\Container\\' => array($vendorDir . '/psr/container/src'),
     'Models\\' => array($baseDir . '/Models'),
+    'Faker\\' => array($vendorDir . '/fakerphp/faker/src/Faker'),
     'Exceptions\\' => array($baseDir . '/Exceptions'),
     'Controllers\\' => array($baseDir . '/Controllers'),
 );

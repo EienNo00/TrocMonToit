@@ -7,6 +7,7 @@ namespace Composer\Autoload;
 class ComposerStaticInitef7b946a164cca5d6228eb1fefd81898
 {
     public static $files = array (
+        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
     );
@@ -26,9 +27,17 @@ class ComposerStaticInitef7b946a164cca5d6228eb1fefd81898
         array (
             'Router\\' => 7,
         ),
+        'P' => 
+        array (
+            'Psr\\Container\\' => 14,
+        ),
         'M' => 
         array (
             'Models\\' => 7,
+        ),
+        'F' => 
+        array (
+            'Faker\\' => 6,
         ),
         'E' => 
         array (
@@ -61,9 +70,17 @@ class ComposerStaticInitef7b946a164cca5d6228eb1fefd81898
         array (
             0 => __DIR__ . '/../..' . '/Router',
         ),
+        'Psr\\Container\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/container/src',
+        ),
         'Models\\' => 
         array (
             0 => __DIR__ . '/../..' . '/Models',
+        ),
+        'Faker\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/fakerphp/faker/src/Faker',
         ),
         'Exceptions\\' => 
         array (
