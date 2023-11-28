@@ -7,16 +7,13 @@ use Source\Renderer;
 
 class HomeController
 {
-    public function index(): Renderer
+    private string $res;
+
+    public function index()
     {
         $userModel = new User();
         $users = $userModel->all();
-        return Renderer::make('home/index', compact('users'));
-    }
-    public function connexion(): Renderer
-    {
-        $userModel = new User();
-        $users = $userModel->all();
-        return Renderer::make('home/connexion', compact('users'));
+        Renderer::view('home/index');
+        return;
     }
 }

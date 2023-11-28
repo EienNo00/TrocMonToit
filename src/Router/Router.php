@@ -21,7 +21,7 @@ class Router
         if (is_callable($action)) {
             return $action();
         }
-        
+
         if (is_array($action)) {
             [$className, $method] = $action;
 
