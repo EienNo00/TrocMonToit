@@ -14,13 +14,15 @@ try {
         ]
     );
 
+    // Create type table
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS type (
             id_type INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-            housing_type VARCHAR(255) NOT NULL
+            housings_type VARCHAR(255) NOT NULL
         );"
     );
 
+    // Create users table
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS users (
             id_users INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -33,12 +35,22 @@ try {
     "
     );
 
+    // Create address table
     $pdo->exec(
-        "CREATE TABLE IF NOT EXISTS housing (
-            id_housing INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        "CREATE TABLE IF NOT EXISTS address (
+        id_address INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        city VARCHAR(255) NOT NULL,
+        address VARCHAR(255) NOT NULL
+    );"
+    );
+
+    // Create housings table
+    $pdo->exec(
+        "CREATE TABLE IF NOT EXISTS housings (
+            id_housings INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
             id_type INT NOT NULL,
             night_price INT NOT NULL,
-            housing_name VARCHAR(255),
+            housings_name VARCHAR(255),
             description VARCHAR(255),
             id_address INT NOT NULL,
             id_image INT NOT NULL,
@@ -47,6 +59,7 @@ try {
     "
     );
 
+    // Create equipment table
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS equipment (
             id_equipment INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -54,6 +67,7 @@ try {
         );"
     );
 
+    // Create service table
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS service (
             id_service INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -61,54 +75,59 @@ try {
         );"
     );
 
+    // Create housings_service table
     $pdo->exec(
-        "CREATE TABLE IF NOT EXISTS housing_service (
-            id_housing_service INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        "CREATE TABLE IF NOT EXISTS housings_service (
+            id_housings_service INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
             id_service INT NOT NULL,
-            id_housing INT NOT NULL,
+            id_housings INT NOT NULL,
             FOREIGN KEY (id_service) REFERENCES service(id_service),
-            FOREIGN KEY (id_housing) REFERENCES housing(id_housing),
-            UNIQUE KEY unique_housing_service (id_housing, id_service)
+            FOREIGN KEY (id_housings) REFERENCES housings(id_housings),
+            UNIQUE KEY unique_housings_service (id_housings, id_service)
         );"
     );
 
+    // Create housings_equipment table
     $pdo->exec(
-        "CREATE TABLE IF NOT EXISTS housing_equipment (
-            id_housing_equipment INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        "CREATE TABLE IF NOT EXISTS housings_equipment (
+            id_housings_equipment INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
             id_equipment INT NOT NULL,
-            id_housing INT NOT NULL,
+            id_housings INT NOT NULL,
             FOREIGN KEY (id_equipment) REFERENCES equipment(id_equipment),
-            FOREIGN KEY (id_housing) REFERENCES housing(id_housing),
-            UNIQUE KEY unique_housing_equipment (id_housing, id_equipment)
+            FOREIGN KEY (id_housings) REFERENCES housings(id_housings),
+            UNIQUE KEY unique_housings_equipment (id_housings, id_equipment)
         );"
     );
 
+    // Create reservation table
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS reservation (
             id_reservation INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-            id_housing INT NOT NULL,
+            id_housings INT NOT NULL,
             begin_date DATE,
             end_date DATE,
             id_users INT NOT NULL,
-            FOREIGN KEY (id_housing) REFERENCES housing(id_housing),
+            FOREIGN KEY (id_housings) REFERENCES housings(id_housings),
             FOREIGN KEY (id_users) REFERENCES users(id_users)
         );"
     );
 
+    // Create opinion table
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS opinion (
             id_opinion INT AUTO_INCREMENT PRIMARY KEY,
-            id_housing INT NOT NULL,
+            id_housings INT NOT NULL,
             id_users INT NOT NULL,
             commentary TEXT,
             grade INT CHECK (grade >= 1 AND grade <= 20),
-            FOREIGN KEY (id_housing) REFERENCES housing(id_housing),
+            FOREIGN KEY (id_housings) REFERENCES housings(id_housings),
             FOREIGN KEY (id_users) REFERENCES users(id_users)
         );"
     );
 
+    // Insert data into type table
     $pdo->exec(
-        "INSERT INTO type(id_type, housing_type) VALUES
+        "INSERT INTO type(id_type, housings_type) VALUES
         (1,'Appartements'),
         (2,'Maisons'),
         (3,'Chalets'),
@@ -121,6 +140,8 @@ try {
         (10,'Cars');
         "
     );
+
+    // Insert data into service table
     $pdo->exec(
         "INSERT INTO service(id_service,service_name) VALUES
         (1,'Transfert aeroport'),
@@ -132,6 +153,8 @@ try {
         (7,'Loisirs');
         "
     );
+
+    // Insert data into equipment table
     $pdo->exec(
         "INSERT INTO equipment(id_equipment,equipment_name) VALUES
         (1,'Connexion Wifi'),
@@ -150,46 +173,77 @@ try {
         "
     );
 
+    // Use Faker to generate fake data
     $faker = Factory::create();
+
+    // Insert data into address table
+    for ($i = 0; $i < 10; $i++) {
+        $city = $faker->city;
+        $streetAddress = $faker->streetAddress;
+
+        $pdo->exec(
+            "INSERT INTO address (city, address) VALUES ('{$city}', '{$streetAddress}');
+        "
+        );
+    }
+
+    // Insert data into housings and users tables
     for ($i = 0; $i < 10; $i++) {
         $typeId = $faker->numberBetween(1, 10);
-
-        $address = $faker->address;
-        $housingName = $faker->word;
+        $addressId = $faker->numberBetween(1, 10);
+        $housingsName = $faker->word;
         $nightPrice = $faker->numberBetween($min = 50, $max = 200);
 
         $pdo->exec(
-            "INSERT INTO housing(id_type, night_price, housing_name, description, id_address, id_image)
-        VALUES
-        ('{$typeId}', '{$nightPrice}', '{$housingName}', '{$faker->sentence}', 1, 1);
-        "
+            "INSERT INTO housings(id_type, night_price, housings_name, description, id_address, id_image) VALUES
+            ('{$typeId}', '{$nightPrice}', '{$housingsName}', '{$faker->sentence}','{$addressId}' , 1);
+            "
         );
 
-        $phoneNumber = substr($faker->phoneNumber, 0, 15); // Trim phone number if necessary
+        $phoneNumber = substr($faker->phoneNumber, 0, 15);
         $pdo->exec(
-            "INSERT INTO users (last_name, first_name, email, password, phone_number)
-        VALUES 
-            ('{$faker->lastName}', '{$faker->firstName}', '{$faker->email}', 'pass', '{$phoneNumber}');
-        "
+            "INSERT INTO users (last_name, first_name, email, password, phone_number) VALUES 
+                ('{$faker->lastName}', '{$faker->firstName}', '{$faker->email}', 'pass', '{$phoneNumber}');
+            "
         );
     }
-    for ($i = 0; $i < 10; $i++) {
+
+    // Insert data into housings_equipment table
+    for ($i = 0; $i < 20; $i++) {
         $equipmentId = $faker->numberBetween(1, 13);
-        $housingId = $faker->numberBetween(1, 10);
-        $existingEntry = $pdo->query("SELECT COUNT(*) FROM housing_equipment WHERE id_housing = '{$housingId}' AND id_equipment = '{$equipmentId}'")->fetchColumn();
+        $housingsId = $faker->numberBetween(1, 10);
+
+        // Check for existing entry
+        $existingEntry = $pdo->query("SELECT COUNT(*) FROM housings_equipment WHERE id_housings = '{$housingsId}' AND id_equipment = '{$equipmentId}'")->fetchColumn();
+
         if ($existingEntry == 0) {
             $pdo->exec(
-                "INSERT INTO housing_equipment (id_equipment, id_housing)
-            VALUES ('{$equipmentId}', '{$housingId}');
-        "
+                "INSERT INTO housings_equipment (id_equipment, id_housings) VALUES ('{$equipmentId}', '{$housingsId}');
+            "
             );
         } else {
-            echo "La combinaison id_housing = {$housingId} et id_equipment = {$equipmentId} existe déjà. Évitant le doublon.\n";
+            echo "La combinaison id_housings = {$housingsId} et id_equipment = {$equipmentId} existe déjà. Évitant le doublon.\n";
         }
     }
 
+    // Insert data into housings_service table
+    for ($i = 0; $i < 20; $i++) {
+        $serviceId = $faker->numberBetween(1, 7); // Assuming you have 7 services in the table
+        $housingsId = $faker->numberBetween(1, 10);
 
+        // Check for existing entry
+        $existingEntry = $pdo->prepare("SELECT COUNT(*) FROM housings_service WHERE id_housings = ? AND id_service = ?");
+        $existingEntry->execute([$housingsId, $serviceId]);
 
+        if ($existingEntry->fetchColumn() == 0) {
+            $pdo->exec(
+                "INSERT INTO housings_service (id_service, id_housings) VALUES ('{$serviceId}', '{$housingsId}');
+            "
+            );
+        } else {
+            echo "La combinaison id_housings = {$housingsId} et id_service = {$serviceId} existe déjà. Évitant le doublon.\n";
+        }
+    }
 
     echo "Tables créées et données insérées avec succès.";
 } catch (\PDOException $e) {

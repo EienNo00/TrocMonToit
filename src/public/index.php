@@ -11,6 +11,7 @@ define('BASE_VIEW_PATH', dirname(__DIR__) . DIRECTORY_SEPARATOR . 'views'
 $router = new Router();
 
 $router->register('/', ['Controllers\HomeController', 'index']);
+$router->register('/home', ['Controllers\HousingController', 'home']);
 $router->register('/connexion', ['Controllers\UserController', 'connexion']);
 $router->register('/register', ['Controllers\UserController', 'register']);
 $router->register('/registersuccess', ['Controllers\UserController', 'registersuccess']);

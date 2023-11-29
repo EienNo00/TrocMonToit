@@ -79,11 +79,29 @@ class UserController
     }
     public function login()
     {
-        $userModel = new User();
-        $users = $userModel->all();
-        Renderer::view('user/login');
-        return;
+        $error = ''; // Initialiser la variable d'erreur
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $mail = $_POST['email'];
+            $password = $_POST['password'];
+
+            $userModel = new User();
+            $authenticated = $userModel->findByCredentials($mail, $password);
+
+            if ($authenticated) {
+                // Utilisateur trouvé, rediriger vers la page appropriée (par exemple, /index)
+                header("Location: /home");
+                exit();
+            } else {
+                // Authentification échouée, définir le message d'erreur
+                $error = 'Identifiants invalides';
+            }
+        }
+
+        // Affichez la page de connexion avec le message d'erreur si nécessaire
+        Renderer::view('user/login', ['error' => $error]);
     }
+
     public function registertest()
     {
     }
