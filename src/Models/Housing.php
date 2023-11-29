@@ -2,8 +2,6 @@
 
 namespace Models;
 
-use Source\Constant;
-
 class Housing extends Model
 {
     public function allTables()
