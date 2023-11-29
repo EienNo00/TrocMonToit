@@ -10,8 +10,7 @@ class HousingController
     public function home()
     {
         $housingModel = new Housing();
-        $housings = $housingModel->allTables();
-        // var_dump($housings);
+        $housings = $housingModel->joinAllTables();
         Renderer::view('home/home', ['housings' => $housings]);
         return;
     }
