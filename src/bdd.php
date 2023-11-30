@@ -14,9 +14,9 @@ try {
         ]
     );
 
-    // Create type table
+    // Create types table
     $pdo->exec(
-        "CREATE TABLE IF NOT EXISTS type (
+        "CREATE TABLE IF NOT EXISTS types (
             id_type INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
             housings_type VARCHAR(255) NOT NULL
         );"
@@ -54,7 +54,7 @@ try {
             description VARCHAR(255),
             id_address INT NOT NULL,
             id_image INT NOT NULL,
-            FOREIGN KEY (id_type) REFERENCES type(id_type)
+            FOREIGN KEY (id_type) REFERENCES types(id_type)
         );
     "
     );
@@ -125,9 +125,9 @@ try {
         );"
     );
 
-    // Insert data into type table
+    // Insert data into types table
     $pdo->exec(
-        "INSERT INTO type(id_type, housings_type) VALUES
+        "INSERT INTO types(id_type, housings_type) VALUES
         (1,'Appartements'),
         (2,'Maisons'),
         (3,'Chalets'),

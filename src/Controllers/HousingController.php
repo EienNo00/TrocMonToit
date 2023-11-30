@@ -10,8 +10,13 @@ class HousingController
     public function home()
     {
         $housingModel = new Housing();
-        $housings = $housingModel->joinAllTables();
-        Renderer::view('home/home', ['housings' => $housings]);
+        $typeFilter = $_GET['types'] ?? null;
+        // var_dump($typeFilter);
+        $housings = $housingModel->joinAllTables($typeFilter);
+        $types = $housingModel->getDistinctType();
+        // var_dump($types);
+        // var_dump($housings);
+        Renderer::view('home/home', ['housings' => $housings, 'types' => $types]);
         return;
     }
 }
